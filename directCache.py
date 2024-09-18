@@ -16,9 +16,6 @@ class RAM:
         self.tamanho = 2**k
         self.dados_memoria = [0] * self.tamanho
 
-    def capacidade(self):
-        return self.tamanho
-
     def verifica_endereco(self, ender):
         if ender < 0 or ender >= self.tamanho:
             raise EnderecoInvalido(ender)
@@ -88,33 +85,29 @@ class Cache:
         self.modificada = True
 
     def in_cache(self, ender, w, r, t):
-        if self.cache_hit(r, t):
+        if r == self.linha_atual:  
             print(f"Cache HIT no endereço: {ender}")
             return True
         else:
             print(f"Cache MISS no endereço: {ender}")
-            self.carregar_bloco(ender, r)
+            self.atualizar_bloco(r)  
             return False
 
-    def carregar_bloco(self, ender, r):
-        endereco_bloco = r * self.tamanho_linha_cache
+    def atualizar_bloco(self, r):
         if self.modificada:
-            self.gravar_linha_na_ram()
+            endereco_bloco = self.linha_atual * self.tamanho_linha_cache
+            for i in range(self.tamanho_linha_cache):
+                self.ram.write(endereco_bloco + i, self.linha_dados[i])
+
+        endereco_bloco = r * self.tamanho_linha_cache
         for i in range(self.tamanho_linha_cache):
             self.linha_dados[i] = self.ram.read(endereco_bloco + i)
+
         self.linha_atual = r
         self.modificada = False
 
-    def gravar_linha_na_ram(self):
-        endereco_bloco = self.linha_atual * self.tamanho_linha_cache
-        for i in range(self.tamanho_linha_cache):
-            self.ram.write(endereco_bloco + i, self.linha_dados[i])
-
-    def cache_hit(self, r, t):
-        return r == self.linha_atual
-    
     def verifica_cache(self, ender):
-        if ender >= self.ram.capacidade():
+        if ender >= self.ram.tamanho:  
             raise EnderecoInvalido(ender)
 
 try:
