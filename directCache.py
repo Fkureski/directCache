@@ -1,11 +1,12 @@
+#Felipe Kureski
+#Henrique Grigoli
+#Théo Nicoleli
+
 import sys
 
 class IO:
     def output(self, s):
         print(s, end='')
-
-    def input(self, prompt):
-        return input(prompt)
 
 class EnderecoInvalido(Exception):
     def __init__(self, ender):
@@ -68,6 +69,7 @@ class Cache:
         print('Valor de W =', bin(w))
         print('Valor de R =', bin(r))
         print('Valor de T =', bin(t))
+
         return w, r, t
 
     def read(self, ender):
